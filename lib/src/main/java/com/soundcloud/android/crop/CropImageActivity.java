@@ -350,7 +350,21 @@ public class CropImageActivity extends MonitoredActivity {
             }
 
             try {
-                croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
+//                croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
+
+                /////// decrease image ///////
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                // 画像の縦横どちらか1000px以上の場合に1000px以下にする
+                int sampleSize;
+                if(width > height) {
+                    sampleSize = (int) ((width / 1000) + 1);
+                } else {
+                    sampleSize = (int) ((height / 1000) + 1);
+                }
+                options.inSampleSize = sampleSize;
+                croppedImage = decoder.decodeRegion(rect, options);
+                ///////
+
                 if (rect.width() > outWidth || rect.height() > outHeight) {
                     Matrix matrix = new Matrix();
                     matrix.postScale((float) outWidth / rect.width(), (float) outHeight / rect.height());

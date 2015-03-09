@@ -66,6 +66,7 @@ class HighlightView {
 
     private View viewContext; // View displaying image
     private boolean showThirds;
+    private boolean showRectangleLines;
     private int highlightColor;
 
     private ModifyMode modifyMode = ModifyMode.None;
@@ -87,6 +88,7 @@ class HighlightView {
         TypedArray attributes = context.obtainStyledAttributes(outValue.resourceId, R.styleable.CropImageView);
         try {
             showThirds = attributes.getBoolean(R.styleable.CropImageView_showThirds, false);
+            showRectangleLines = attributes.getBoolean(R.styleable.CropImageView_showRectangleLines, false);
             highlightColor = attributes.getColor(R.styleable.CropImageView_highlightColor,
                     DEFAULT_HIGHLIGHT_COLOR);
             handleMode = HandleMode.values()[attributes.getInt(R.styleable.CropImageView_showHandles, 0)];
@@ -150,6 +152,10 @@ class HighlightView {
                 drawThirds(canvas);
             }
 
+            if (showRectangleLines) {
+                drawRectangleLines(canvas);
+            }
+
             if (handleMode == HandleMode.Always ||
                     (handleMode == HandleMode.Changing && modifyMode == ModifyMode.Grow)) {
                 drawHandles(canvas);
@@ -207,6 +213,19 @@ class HighlightView {
                 drawRect.right, drawRect.top + yThird, outlinePaint);
         canvas.drawLine(drawRect.left, drawRect.top + yThird * 2,
                 drawRect.right, drawRect.top + yThird * 2, outlinePaint);
+    }
+
+    private void drawRectangleLines(Canvas canvas) {
+        outlinePaint.setStrokeWidth(1);
+
+        float height = drawRect.bottom - drawRect.top;
+        float rectangleHeight = height * 9 /16;
+        float spaceHeight = height - rectangleHeight;
+        float yTop = drawRect.top + (spaceHeight / 2);
+        float yBottom = drawRect.bottom - (spaceHeight / 2);
+
+        canvas.drawLine(drawRect.left, yTop, drawRect.right, yTop, outlinePaint);
+        canvas.drawLine(drawRect.left, yBottom, drawRect.right, yBottom, outlinePaint);
     }
 
     public void setMode(ModifyMode mode) {
